@@ -6,6 +6,7 @@
 </div>
 
 <script src="/js/vendor.js"></script>
+
 @stack('scripts')
 </body>
 
