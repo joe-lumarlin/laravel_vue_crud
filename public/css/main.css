@@ -8,3 +8,10 @@
     background: #fefdff;
 }
 
+h2 {
+    text-align: center;
+}
+
+#backToList {
+    float: right;
+}

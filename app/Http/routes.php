@@ -13,14 +13,10 @@
 
 Route::resource('/', 'ArticleController');
 
-Route::get('/api/articles', function (){
-   return App\Article::all();
-});
+// API
+Route::resource('/api/articles', 'ApiArticlesController');
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-//
+
 //Route::get('/api/items', function () {
 //    return
 ////    $results = \App\Article::latest();

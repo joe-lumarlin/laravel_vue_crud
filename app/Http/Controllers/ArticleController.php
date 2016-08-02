@@ -12,4 +12,5 @@ class ArticleController extends Controller
     {
         return view('welcome');
     }
+
 }
