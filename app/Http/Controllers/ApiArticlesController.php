@@ -38,7 +38,7 @@ class ApiArticlesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         return Article::create($request->all());
     }
 
     /**
@@ -74,6 +74,6 @@ class ApiArticlesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Article::destroy($id);
     }
 }

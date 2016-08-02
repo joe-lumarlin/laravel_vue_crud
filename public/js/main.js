@@ -19,7 +19,8 @@ var vm = new Vue({
          content: ''
      },
      show: false,
-     edit: false
+     edit: false,
+     add:false
    },
 
    methods: {
@@ -31,13 +32,11 @@ var vm = new Vue({
 
        showArticle: function (id) {
            this.show = true;
-           //this.edit = true;
            this.$http.get('/api/articles/' + id, function (data) {
                this.newArticle.id = data.id;
                this.newArticle.title = data.title;
                this.newArticle.content = data.content;
            });
-           //this.show = false;
        },
 
        editArticle: function (id) {
@@ -50,13 +49,34 @@ var vm = new Vue({
                self.show = false;
                self.edit = false;
            });
+       },
 
+       createNewArticle: function () {
+         this.add = true;
+       },
 
+       createArticle: function () {
+           var article = this.newArticle;
+
+           this.$http.post('/api/articles/', article);
+           this.fetchArticles();
+       },
+
+       removeArticle: function (id) {
+           var confirmBox = confirm("Do you really want to delete this article?");
+           if(confirmBox) {
+               this.$http.delete('/api/articles/' + id, function () {
+                   this.fetchArticles();
+               });
+
+           }
        },
 
        back: function () {
            this.show = false;
            this.edit = false;
+           this.add = false;
+           this.newArticle = { id: '', title: '', content: '' };
            this.fetchArticles();
        },
 
@@ -72,6 +92,7 @@ var vm = new Vue({
                content: !!this.newArticle.content
            }
        },
+
        isValid: function () {
            var validation = this.validation;
            return Object.keys(validation).every(function (key) {
