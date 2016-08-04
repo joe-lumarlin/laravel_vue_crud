@@ -18,16 +18,52 @@ var vm = new Vue({
          title: '',
          content: ''
      },
+
+     pagination: {
+           total: 0,
+           per_page: 4,
+           from: 1,
+           to: 0,
+           current_page: 1
+       },
+     offset: 4,// left and right padding from the pagination <span>,just change it to see effects
+     items: [],
+
      show: false,
      edit: false,
-     add:false
+     add: false,
+     success: false
+     //empty: tr
    },
 
    methods: {
-       fetchArticles: function () {
-           this.$http.get('/api/articles', function (data) {
-               this.$set('articles', data);
+
+       isEmpty: function (ob) {
+           return ob.length;
+       },
+
+       //fetchArticles: function () {
+       //    this.$http.get('/api/articles/', function (data) {
+       //        this.$set('articles', data);
+       //        this.empty = this.isEmpty(data);
+       //    });
+       //},
+       fetchArticles: function (page) {
+           var data = {page: page};
+           self = this;
+           this.$http.get('/api/articles', data).then(function (response) {
+               //look into the routes file and format your response
+               console.log(response.data.data.data);
+               self.$set('articles', response.data.data.data);
+               self.$set('pagination', response.data.pagination);
+               self.isEmpty(response.data.data.data);
+           }, function (error) {
+               // handle error
            });
+       },
+       changePage: function (page) {
+           this.pagination.current_page = page;
+           this.fetchArticles(page);
        },
 
        showArticle: function (id) {
@@ -45,7 +81,7 @@ var vm = new Vue({
            this.newArticle = { id: '', title: '', content: '' };
            self = this;
            this.$http.patch('/api/articles/' + id, article, function (data) {
-               this.fetchArticles();
+               this.fetchArticles(1);
                self.show = false;
                self.edit = false;
            });
@@ -55,18 +91,24 @@ var vm = new Vue({
          this.add = true;
        },
 
-       createArticle: function () {
+       addArticle: function () {
            var article = this.newArticle;
+           this.$http.post('/api/articles/', article, function () {
+               self = this;
+               this.success = true;
+               setTimeout(function () {
+                   self.success = false
+               }, 5000);
+               this.back();
+           });
 
-           this.$http.post('/api/articles/', article);
-           this.fetchArticles();
        },
 
        removeArticle: function (id) {
            var confirmBox = confirm("Do you really want to delete this article?");
            if(confirmBox) {
                this.$http.delete('/api/articles/' + id, function () {
-                   this.fetchArticles();
+                   this.fetchArticles(1);
                });
 
            }
@@ -77,7 +119,7 @@ var vm = new Vue({
            this.edit = false;
            this.add = false;
            this.newArticle = { id: '', title: '', content: '' };
-           this.fetchArticles();
+           this.fetchArticles(1);
        },
 
        toEdit: function () {
@@ -98,10 +140,33 @@ var vm = new Vue({
            return Object.keys(validation).every(function (key) {
                return validation[key]
            });
+       },
+
+       isActived: function () {
+           return this.pagination.current_page;
+       },
+       pagesNumber: function () {
+           if (!this.pagination.to) {
+               return [];
+           }
+           var from = this.pagination.current_page - this.offset;
+           if (from < 1) {
+               from = 1;
+           }
+           var to = from + (this.offset * 2);
+           if (to >= this.pagination.last_page) {
+               to = this.pagination.last_page;
+           }
+           var pagesArray = [];
+           while (from <= to) {
+               pagesArray.push(from);
+               from++;
+           }
+           return pagesArray;
        }
    },
 
    ready: function () {
-       this.fetchArticles();
+       this.fetchArticles(1);
    }
 });

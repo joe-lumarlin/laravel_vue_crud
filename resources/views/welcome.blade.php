@@ -38,13 +38,13 @@
 
         {{--End of ShowEdit field--}}
 
-{{--AddNew--}}
-        <div v-if="add">
+        {{--AddNew field--}}
+        <div v-if="add || !isEmpty">
             <h2>Add new article</h2>
 
             <button @click="back()" class="btn btn-default" id="backToList">Back to list</button>
 
-            <form action="#" @submit.prevent="createArticle" method="POST">
+            <form action="#" @submit.prevent="addArticle()" method="POST">
                 <div class="alert alert-danger" v-if="!isValid">
                     <ul>
                         <li v-show="!validation.title">The title field is required.</li>
@@ -54,27 +54,28 @@
 
                 <div class="form-group">
                     <label for="title">TITLE:</label>
-                    <input v-model="newArticle.title" @focus="toEdit()" type="text" id="title" name="title" class="form-control">
+                    <input v-model="newArticle.title" type="text" id="title" name="title" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <label for="content">CONTENT:</label>
-                    <input v-model="newArticle.content" @focus="toEdit()" type="text" id="content" name="content" class="form-control">
+                    <input v-model="newArticle.content" type="text" id="content" name="content" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <button :disabled="!isValid" class="btn btn-default" type="submit" v-if="edit">Add Article</button>
+                    <button :disabled="!isValid" class="btn btn-default" type="submit" v-if="add">Add Article</button>
                 </div>
 
             </form>
+
         </div>
-        {{--THe end of Add--}}
+        {{--The end of AddNew field--}}
 
-        {{--</form>--}}
-
-        {{--<div class="alert alert-success" transition="success" v-if="success">Add new user successful.</div>--}}
+        <div class="alert alert-success" transition="success" v-if="success">Add new article successful.</div>
         {{--<hr>--}}
-        <div v-if="!show && !edit && !add">
+
+        <div v-if="!show && !edit && !add && isEmpty">
+
             <h2>The list of articles</h2>
             <table class="table table-striped ">
                 <thead class="thead-inverse">
@@ -101,6 +102,29 @@
                 </tr>
                 </tbody>
             </table>
+
+            <nav>
+                <ul class="pagination">
+                    <li v-if="pagination.current_page > 1">
+                        <a href="#" aria-label="Previous"
+                           @click.prevent="changePage(pagination.current_page - 1)">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li v-for="page in pagesNumber"
+                        v-bind:class="[ page == isActived ? 'active' : '']">
+                        <a href="#"
+                           @click.prevent="changePage(page)">@{{ page }}</a>
+                    </li>
+                    <li v-if="pagination.current_page < pagination.last_page">
+                        <a href="#" aria-label="Next"
+                           @click.prevent="changePage(pagination.current_page + 1)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
         </div>
     </div>
 @endsection

@@ -17,18 +17,22 @@ class ApiArticlesController extends Controller
      */
     public function index()
     {
-        return Article::all();
+        $results = \App\Article::latest()->paginate(6);
+
+        $response = [
+            'pagination' => [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
+                'from' => $results->firstItem(),
+                'to' => $results->lastItem()
+            ],
+            'data' => $results
+        ];
+        return $response;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.

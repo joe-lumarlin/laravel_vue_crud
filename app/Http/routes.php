@@ -16,23 +16,3 @@ Route::resource('/', 'ArticleController');
 // API
 Route::resource('/api/articles', 'ApiArticlesController');
 
-
-//Route::get('/api/items', function () {
-//    return
-////    $results = \App\Article::latest();
-//
-////    ->paginate(4);
-//
-////    $response = [
-////        'pagination' => [
-////            'total' => $results->total(),
-////            'per_page' => $results->perPage(),
-////            'current_page' => $results->currentPage(),
-////            'last_page' => $results->lastPage(),
-////            'from' => $results->firstItem(),
-////            'to' => $results->lastItem()
-////        ],
-////        'data' => $results
-////    ];
-////    return $response;
-//});
